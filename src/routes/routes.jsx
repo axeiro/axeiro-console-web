@@ -1,9 +1,9 @@
 import { createBrowserRouter } from "react-router-dom";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import { Navigate } from "react-router-dom";
 
 import App from "../App";
 import Register from "../pages/Register";
-import User from "../pages/User";
 import GitHubCallbackPage from '../utils/GitHubCallbackPage'
 import GitLabCallback from "../utils/GitLabCallback";
 import Login from "../pages/Login";
@@ -23,14 +23,21 @@ import Login from "../pages/Login";
   }
 
 
+import { useEffect } from "react";
+
+export function HomeRedirect() {
+  useEffect(() => {
+    window.location.replace("https://axeiro.com");
+  }, []);
+
+  return null; // no UI
+}
+
 
 const router = createBrowserRouter ([
     {
         path:'/' ,
-        element:<App />,
-        children:[
-            {path:'/' , element:<User />},
-        ]
+        element: <HomeRedirect />,
     },
      {path:'/auth/register' , element:<GoogleleAuthWrapper />},
      {path:'/auth/login' , element:<GoogleleAuthWrapperLogin />},
