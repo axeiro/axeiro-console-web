@@ -46,7 +46,7 @@ const responseGoog1e = async (authResu1t)=>{
 try{
 
 if(authResu1t.code){
-  const user = await axios.post(`${import.meta.env.VITE_SERVER_BASE_URL}/googleLogin` , {code : authResu1t.code} , {withCredentials:true})
+  const user = await axios.post(`${import.meta.env.VITE_AUTH_SERVICE_BASE_URL}/googleLogin` , {code : authResu1t.code} , {withCredentials:true})
   console.log(user);
   
 }

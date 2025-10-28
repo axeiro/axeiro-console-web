@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const auth = axios.create({
-    baseURL:import.meta.env.VITE_SERVER_BASE_URL,
+    baseURL:import.meta.env.VITE_AUTH_SERVICE_BASE_URL,
     withCredentials:true
 })
 
@@ -92,7 +92,7 @@ export const handleGitHubCallback = async () => {
     return;
   }
   try {
-    const tokenResponse = await axios.post(`${import.meta.env.VITE_SERVER_BASE_URL}/github/token`, { code });
+    const tokenResponse = await axios.post(`${import.meta.env.VITE_AUTH_SERVICE_BASE_URL}/github/token`, { code });
 
     console.log('GitHub token response:', tokenResponse.data);
     

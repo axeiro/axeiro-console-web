@@ -28,7 +28,7 @@ const Login = () => {
     try {
       // Example (replace with your own):
       // const res = await axios.post(
-      //   `${import.meta.env.VITE_SERVER_BASE_URL}/login`,
+      //   `${import.meta.env.VITE_AUTH_SERVICE_BASE_URL}/login`,
       //   formData,
       //   { withCredentials: true }
       // );
@@ -46,7 +46,7 @@ const Login = () => {
     try {
       if (authResult?.code) {
         const user = await axios.post(
-          `${import.meta.env.VITE_SERVER_BASE_URL}/googleLogin`,
+          `${import.meta.env.VITE_AUTH_SERVICE_BASE_URL}/googleLogin`,
           { code: authResult.code },
           { withCredentials: true }
         );
@@ -76,13 +76,13 @@ const Login = () => {
 
   // Reuse the same GitLab server route as in Register
   const gitlabLoginHref =
-    `${(import.meta.env.VITE_SERVER_BASE_URL || '').replace(/\/$/, '')}/auth/gitlablogin` ||
+    `${(import.meta.env.VITE_AUTH_SERVICE_BASE_URL || '').replace(/\/$/, '')}/auth/gitlablogin` ||
     'http://localhost:3000/v1/auth/gitlablogin';
 
   // Apple Sign In initiation endpoint on your backend (same approach as Register)
   const loginWithApple = () => {
     try {
-      const appleUrl = `${import.meta.env.VITE_SERVER_BASE_URL}/appleLogin`;
+      const appleUrl = `${import.meta.env.VITE_AUTH_SERVICE_BASE_URL}/appleLogin`;
       window.location.href = appleUrl;
     } catch (error) {
       console.log('Error during Apple OAuth redirection:', error);
