@@ -97,10 +97,11 @@ const handleSocialLogin = (provider) => {
         <InfinityLoader size={700} label="submitting your data" />
       </div> 
    }
-   <Link to={'/'} className=' lg:absolute text-2xl text-white flex items-baseline px-5 gap-1'>
+  <div className=' w-full flex items-center justify-between px-8'>
+     <Link to={'/'} className=' text-3xl text-white flex items-baseline  gap-1'>
     <GoHome  className=''/>
    </Link>
-   <div className=" absolute -right-[87%] button button-2 p-0.5 rounded-4xl cursor-pointer w-30.5">
+   <div className=" button button-2 p-0.5 rounded-4xl cursor-pointer w-30.5">
           
             <Link to="/auth/login">
               <button className=" bg-black text-white border-gray-700 rounded-4xl px-6 py-2 border-2 cursor-pointer w-full">
@@ -109,6 +110,7 @@ const handleSocialLogin = (provider) => {
             </Link>
           
         </div>
+  </div>
     <motion.div
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}

@@ -24,6 +24,7 @@ import Login from "../pages/Login";
 
 
 import { useEffect } from "react";
+import Dashboard from "../pages/dashboard/Dashboard";
 
 export function HomeRedirect() {
   useEffect(() => {
@@ -43,6 +44,7 @@ const router = createBrowserRouter ([
      {path:'/auth/login' , element:<GoogleleAuthWrapperLogin />},
      {path:'/callback' , element:<GitHubCallbackPage />},
      {path:'/gitlab/callback' , element:<GitLabCallback />},
+     {path:'/user' , element:<Dashboard />},
 ])
 
 export default router

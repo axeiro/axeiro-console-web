@@ -7,7 +7,7 @@ import InfinityLoader from '../utils/InfinityLoader';
 import { GoHome } from 'react-icons/go';
 import { useGoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
-
+import toast, { Toaster } from 'react-hot-toast';
 const Login = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
@@ -50,10 +50,20 @@ const Login = () => {
           { code: authResult.code },
           { withCredentials: true }
         );
+        toast.success(user.data.message)
+        toast('Custom notification', {
+  icon: '🔥',
+  style: {
+    background: 'black',
+    color: 'white',
+  },
+});
         console.log(user);
-        // navigate('/dashboard');
+        window.localStorage.setItem('account' , user.data.data)
+        navigate('/dashboard');
       }
     } catch (err) {
+      toast.error(err.data.message)
       console.log(err);
     }
   };
@@ -100,7 +110,7 @@ const Login = () => {
       <Link to="/" className="lg:absolute text-2xl text-white flex items-baseline px-5 gap-1">
         <GoHome />
       </Link>
-
+      <Toaster position='top-center' />
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
