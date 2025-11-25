@@ -2,10 +2,12 @@ import axios from 'axios'
 
 const auth = axios.create({
     baseURL:import.meta.env.VITE_AUTH_SERVICE_BASE_URL,
-    withCredentials:true
+    headers: { 'Content-Type': 'application/json' },
+    withCredentials: true,
 })
 
-console.log(import.meta.env.SERVER_BASE_URL);
+
+console.log(`backend auth and authorization base URL ${import.meta.env.VITE_AUTH_SERVICE_BASE_URL}`);
 
 export const userRegistration = async(payload)=>{
 try {
@@ -128,3 +130,14 @@ export const handleGitlabcallback = async()=>{
   }
 }
 
+export const handleLogin = async(formData)=>{
+   try {
+      const user = await auth.post('/login' , formData)
+      console.log(user);
+    return user
+    } catch (err) {
+      console.log(err);
+    } finally {
+      // setLoading(false);
+    }
+}

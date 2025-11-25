@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FaGoogle, FaGithub, FaApple, FaEye, FaEyeSlash, FaEnvelope, FaLock } from 'react-icons/fa';
 import { SiGitlab } from 'react-icons/si';
 import { Link, useNavigate } from 'react-router-dom';
@@ -8,7 +8,16 @@ import { GoHome } from 'react-icons/go';
 import { useGoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
+import { useSelector , useDispatch } from 'react-redux';
+import { accountInfo } from '../store/slices/UserSlice';
+import { handleLogin } from '../APIs/auth';
+
+
 const Login = () => {
+  const user = useSelector((state)=> state.account)
+  console.log(user);
+ 
+  const dispatch = useDispatch()
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -24,21 +33,18 @@ const Login = () => {
   // Implement your email/password login here
   const handleEmailLogin = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    try {
-      // Example (replace with your own):
-      // const res = await axios.post(
-      //   `${import.meta.env.VITE_AUTH_SERVICE_BASE_URL}/login`,
-      //   formData,
-      //   { withCredentials: true }
-      // );
-      // console.log(res?.data);
-      // navigate('/dashboard');
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setLoading(false);
-    }
+    // setLoading(true);
+  try {
+    const user = await handleLogin(formData)
+    console.log(user);
+    
+      toast.success(user.data.message)
+      dispatch(accountInfo(user.data.data))
+        navigate(`/${user.data.data.payload.name}`);
+  } catch (error) {
+     console.log(err);
+     setLoading(false)
+  }
   };
 
   // Use the same Google auth-code flow endpoint as registration
@@ -57,10 +63,11 @@ const Login = () => {
     background: 'black',
     color: 'white',
   },
-});
+}); 
+dispatch(accountInfo(user.data.data))
         console.log(user);
-        window.localStorage.setItem('account' , user.data.data)
-        navigate('/dashboard');
+        // window.localStorage.setItem('account' , user.data.data)
+        navigate(`/${user.data.data.name}`);
       }
     } catch (err) {
       toast.error(err.data.message)
