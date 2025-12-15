@@ -33,10 +33,17 @@ import Login from "../pages/Login";
 
 
 import { useEffect } from "react";
-import Dashboard from "../pages/dashboard/Dashboard.jsx";
 import { useSelector } from "react-redux";
 import Data from "../pages/Data.jsx";
-
+import Console from "../pages/console/Console.jsx";
+import Dashboard from "../pages/dashboard/Dashboard.jsx"
+import Projects from "../pages/projects/Projects.jsx"
+import NewApp from "../pages/new-app/NewApp.jsx";
+import UsageAndBilling from "../pages/usage-billing/UsageAndBilling.jsx";
+import Logs from "../pages/logs/Logs.jsx";
+import Settings from "../pages/account-ettings/AccountSettings.jsx";
+import Deployments from "../pages/deployments/Deployments.jsx";
+import ProjectOverview from "../pages/projects/ProjectOverview.jsx";
 export function HomeRedirect() {
    const user = useSelector((state)=> state.account)
   useEffect(() => {
@@ -56,8 +63,26 @@ const router = createBrowserRouter ([
      {path:'/auth/login' , element:<GoogleleAuthWrapperLogin />},
      {path:'/callback' , element:<GitHubCallbackPage />},
      {path:'/gitlab/callback' , element:<GitLabCallback />},
-     {path:'/:user' , element:<Dashboard />},
-     {path:'/data' , element:<Data />},
+     
+     {
+      path:'/:user' ,
+      element:<Console />,
+      children:[
+      {path:'dashboard' , element:<Dashboard />},
+     {path:'projects' , element:<Projects />},
+     {path:'deployments' , element:<Deployments />},
+     {path:'UsageAndBilling' , element:<UsageAndBilling />},
+     {path:'logs' , element:<Logs />},
+     {path:'settings' , element:<Settings />},
+     {path:'newapp' , element:<NewApp />},
+     {path:':project-name/project-overview' , element:<ProjectOverview />},
+      ]
+    },
+    
+
+
+    //  {path:'/data' , element:<Data />},
+     
 ])
 
 export default router

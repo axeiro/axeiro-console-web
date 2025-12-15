@@ -1,12 +1,23 @@
 @import "tailwindcss";
 
-body{
-   background-color: #0a061e;
-   overflow-x: hidden;
-   margin-top: 10px;
-   max-width: 100vw;
-   color: white;
+/* Default (Light Mode) */
+body {
+  background-color: #ffffff;
+  color: #000000;
+  overflow-x: hidden;
+  max-width:  1650px;
+  height: 100vh;
+  margin: auto;
 }
+
+/* Dark Mode */
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #0d0910;
+    color: #ffffff;
+  }
+}
+
 
 .anta-regular {
   font-family: "Anta", sans-serif;

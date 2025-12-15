@@ -3,7 +3,6 @@ import { FaGoogle, FaGithub, FaApple, FaEye, FaEyeSlash, FaEnvelope, FaLock } fr
 import { SiGitlab } from 'react-icons/si';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import InfinityLoader from '../utils/InfinityLoader';
 import { GoHome } from 'react-icons/go';
 import { useGoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
@@ -110,7 +109,7 @@ dispatch(accountInfo(user.data.data))
     <>
       {loading && (
         <div className="flex items-center justify-center min-w-screen fixed top-[50%] z-50">
-          <InfinityLoader size={700} label="signing you in" />
+          
         </div>
       )}
 

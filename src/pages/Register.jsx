@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { FaGoogle, FaGithub, FaApple, FaEye, FaEyeSlash, FaEnvelope, FaLock, FaUser } from 'react-icons/fa';
 import { SiGitlab } from 'react-icons/si';
 import { handleGoogleCallback, registerWithGitHub, registerWithGitLab, registerWithGoogle, userRegistration } from '../APIs/auth';
-import InfinityLoader from '../utils/InfinityLoader';
+
 import { GoHome } from "react-icons/go";
 
 import { Link, useNavigate } from "react-router-dom";
@@ -94,7 +94,7 @@ const handleSocialLogin = (provider) => {
     <>
    {loading && 
      <div className="flex items-center justify-center min-w-screen  fixed top-[50%] z-50">
-        <InfinityLoader size={700} label="submitting your data" />
+        
       </div> 
    }
   <div className=' w-full flex items-center justify-between px-8'>
