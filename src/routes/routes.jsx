@@ -43,7 +43,7 @@ import UsageAndBilling from "../pages/usage-billing/UsageAndBilling.jsx";
 import Settings from "../pages/account-ettings/AccountSettings.jsx";
 import Deployments from "../pages/deployments/Deployments.jsx";
 import ProjectOverview from "../pages/projects/ProjectOverview.jsx";
-import Logs from "../pages/Logs/Logs.jsx"
+import Logs from "../pages/allLogs/Logs.jsx"
 export function HomeRedirect() {
    const user = useSelector((state)=> state.account)
   useEffect(() => {
