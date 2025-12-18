@@ -82,13 +82,23 @@ dispatch(accountInfo(user.data.data))
 
   // Reuse the same GitHub OAuth URL pattern you used in Register
   const loginWithGitHub = () => {
-    try {
-      const authUrl = `https://github.com/login/oauth/authorize?client_id=${import.meta.env.VITE_GITHUB_CLIENT_ID}&redirect_uri=${import.meta.env.VITE_CLIENT_BASE_URL}/callback&scope=user`;
-      window.location.href = authUrl;
-    } catch (error) {
-      console.log('Error during GitHub OAuth redirection:', error);
-    }
-  };
+  
+  const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID;
+
+  const redirectUri =
+    `${import.meta.env.VITE_AUTH_SERVICE_BASE_URL}/github/callback`;
+
+  const state = 'login';
+
+  const url =
+    `https://github.com/login/oauth/authorize` +
+    `?client_id=${clientId}` +
+    `&redirect_uri=${encodeURIComponent(redirectUri)}` +
+    `&scope=read:user user:email` +
+    `&state=${state}`;
+
+  window.location.href = url;
+};
 
   // Reuse the same GitLab server route as in Register
   const gitlabLoginHref =

@@ -4,7 +4,6 @@ import { Navigate } from "react-router-dom";
 
 import App from "../App";
 import Register from "../pages/Register";
-import GitHubCallbackPage from '../utils/GitHubCallbackPage'
 import GitLabCallback from "../utils/GitLabCallback";
 import Login from "../pages/Login";
   const GoogleleAuthWrapper = () =>{
@@ -61,7 +60,6 @@ const router = createBrowserRouter ([
     },
      {path:'/auth/register' , element:<GoogleleAuthWrapper />},
      {path:'/auth/login' , element:<GoogleleAuthWrapperLogin />},
-     {path:'/callback' , element:<GitHubCallbackPage />},
      {path:'/gitlab/callback' , element:<GitLabCallback />},
      
      {

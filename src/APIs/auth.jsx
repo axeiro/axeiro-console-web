@@ -106,7 +106,7 @@ export const handleGitHubCallback = async () => {
 
 export const registerWithGitLab = async ()=>{
     try {
-        const authUrl = await auth.get('gitlablogin')
+        const authUrl = await auth.post('gitlablogin')
         return authUrl
     } catch (error) {
         console.log(error);

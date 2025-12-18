@@ -1,16 +1,119 @@
-import React, { useState } from "react";
+import React, {useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+
 import {
   FiGithub,
   FiGitlab,
   FiBox,
   FiCpu,
   FiDollarSign,
+  FiEdit2
 } from "react-icons/fi";
+
+import {
+  getGithubRepos,
+  getRepoPackageJson,
+  startDeployment,
+} from "../../APIs/deploymentService.jsx";
+
+import {
+  githubRepoConnectRedirect,
+  gitlabOAuthRedirect,
+} from "../../APIs/authService";
 
 const NewApp = () => {
   const [appType, setAppType] = useState("backend");
-  const [size, setSize] = useState("small");
+  const [computeSize, setComputeSize] = useState("small");
+  const [repos, setRepos] = useState([]);
+  const [loadingRepos, setLoadingRepos] = useState(false);
+  
+  const [source, setSource] = useState({
+    provider: "",
+    repo: "",
+    branch: "main",
+  });
 
+  const [runtime, setRuntime] = useState("");
+  const [startCommand, setStartCommand] = useState("");
+  const [editingCommand, setEditingCommand] = useState(false);
+
+  const [spendCap, setSpendCap] = useState(3000);
+  const [loading, setLoading] = useState(false);
+
+   /* ---------- After OAuth redirect ---------- */
+   const [searchParams] = useSearchParams();
+const loadGithubRepos = async () => {
+  try {
+    setLoadingRepos(true);
+    setSource(prev => ({ ...prev, provider: "github" }));
+
+    const { data } = await getGithubRepos();
+    setRepos(data);
+
+  } catch (err) {
+    console.error("Failed to load GitHub repos", err);
+  } finally {
+    setLoadingRepos(false);
+  }
+};
+
+useEffect(() => {
+  const githubConnected = searchParams.get("github") === "connected";
+
+  if (githubConnected) {
+    loadGithubRepos();
+  }
+}, [searchParams]);
+
+
+  /* ---------- Repo selection ---------- */
+const selectGithubRepo = async (repo) => {
+  setSource({
+    provider: "github",
+    repo: repo.full_name,
+    branch: repo.default_branch || "main",
+  });
+
+  const { data } = await getRepoPackageJson(repo.full_name);
+
+  setRuntime(data.runtime);
+  setStartCommand(data.startCommand);
+};
+
+useEffect(() => {
+  if (!startCommand) {
+    setEditingCommand(true);
+  }
+}, [startCommand]);
+
+  /* ---------- Deploy ---------- */
+  const handleDeploy = async () => {
+    if (!source.provider || !runtime || !startCommand) {
+      alert("Missing required fields");
+      return;
+    }
+
+    const payload = {
+      appType,
+      source,
+      runtime,
+      computeSize,
+      spendCap,
+      startCommand,
+    };
+
+    try {
+      setLoading(true);
+      await startDeployment(payload);
+      alert("Deployment started");
+    } catch (err) {
+      console.error(err);
+      alert("Deployment failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+  /* ---------- UI ---------- */
   return (
     <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-[#0b0b12] to-[#120a1f] p-8 text-white">
       {/* Header */}
@@ -53,10 +156,49 @@ const NewApp = () => {
               Source
             </h2>
             <div className="space-y-3">
-              <SourceButton icon={<FiGithub />} label="Connect GitHub" />
-              <SourceButton icon={<FiGitlab />} label="Connect GitLab" />
+              <SourceButton 
+              icon={<FiGithub />} 
+              label="Connect GitHub" 
+              onClick={githubRepoConnectRedirect}
+              disabled={source.provider === "github"}
+              />
+              <SourceButton 
+              icon={<FiGitlab />} 
+              label="Connect GitLab" 
+              onClick={gitlabOAuthRedirect}
+              />
               <SourceButton icon={<FiBox />} label="Docker Image" />
             </div>
+            {source.provider === "github" && (
+  <div className="mt-4 space-y-2">
+    {loadingRepos && (
+      <p className="text-sm text-gray-400">Loading repositories…</p>
+    )}
+
+    {!loadingRepos &&
+      repos?.map(repo => (
+        <button
+          key={repo.full_name}
+          onClick={() => selectGithubRepo(repo)}
+          className="w-full rounded-lg border border-white/10 bg-black/30 px-4 py-2 text-left hover:border-purple-500"
+        >
+          <div className="text-sm font-medium">{repo.name}</div>
+          <div className="text-xs text-gray-400">
+            {repo.full_name}
+          </div>
+        </button>
+      ))}
+  </div>
+)}
+
+{!source.provider && (
+  <p className="text-xs text-gray-400">
+    Connect a source to continue
+  </p>
+)}
+
+
+
           </section>
 
           {/* Runtime */}
@@ -65,9 +207,31 @@ const NewApp = () => {
               Runtime
             </h2>
             <div className="flex items-center justify-between rounded-lg border border-white/10 bg-black/30 px-4 py-3">
-              <span className="text-sm">Detected: Node.js 18</span>
-              <button className="text-sm text-purple-400 hover:text-purple-300">
-                Edit
+             {runtime || "Waiting for repository"}
+              <select
+  value={runtime}
+  onChange={(e) => setRuntime(e.target.value)}
+  className="bg-black/30 border border-white/10 rounded px-2 py-1 text-sm"
+>
+  <option value="nodejs18">Node.js 18</option>
+  <option value="nodejs20">Node.js 20</option>
+</select>
+
+            </div>
+          </section>
+             <section title="Start Command">
+            <div className="flex gap-2">
+              <input
+                value={startCommand}
+                disabled={!editingCommand}
+                onChange={(e) => setStartCommand(e.target.value)}
+                className="flex-1 rounded-lg border border-white/10 bg-black/30 px-3 py-2 text-sm"
+              />
+              <button
+                onClick={() => setEditingCommand(!editingCommand)}
+                className="rounded-lg border border-white/10 bg-black/30 px-3 py-2"
+              >
+                <FiEdit2 />
               </button>
             </div>
           </section>
@@ -79,22 +243,22 @@ const NewApp = () => {
             </h2>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
               <ComputeCard
-                active={size === "small"}
-                onClick={() => setSize("small")}
+                active={computeSize === "small"}
+                onClick={() => setComputeSize("small")}
                 title="Small"
                 meta="1 vCPU · 1GB RAM"
                 price="₹820 / month"
               />
               <ComputeCard
-                active={size === "medium"}
-                onClick={() => setSize("medium")}
+                active={computeSize === "medium"}
+                onClick={() => setComputeSize("medium")}
                 title="Medium"
                 meta="2 vCPU · 4GB RAM"
                 price="₹1,640 / month"
               />
               <ComputeCard
-                active={size === "large"}
-                onClick={() => setSize("large")}
+                active={computeSize === "large"}
+                onClick={() => setComputeSize("large")}
                 title="Large"
                 meta="4 vCPU · 8GB RAM"
                 price="₹3,280 / month"
@@ -139,8 +303,8 @@ const NewApp = () => {
           </section>
 
           {/* Deploy */}
-          <button className="w-full rounded-xl bg-purple-600 py-3 text-sm font-semibold transition hover:bg-purple-700">
-            Deploy App
+          <button onClick={handleDeploy} className="w-full rounded-xl bg-purple-600 py-3 text-sm font-semibold transition hover:bg-purple-700">
+            {loading ? "Deploying..." : "Deploy App"}
           </button>
         </div>
       </div>
@@ -152,8 +316,17 @@ export default NewApp;
 
 /* ---------- Sub Components ---------- */
 
-const SourceButton = ({ icon, label }) => (
-  <button className="flex items-center gap-3 rounded-lg border border-white/10 bg-black/30 px-4 py-3 text-sm text-gray-300 transition hover:border-purple-500/40 hover:text-white">
+const SourceButton = ({ icon, label , onClick, disabled}) => (
+  <button 
+  onClick={onClick}
+  disabled={disabled}
+  className={`flex items-center gap-3 rounded-lg border px-4 py-3 text-sm
+  ${disabled
+    ? "cursor-not-allowed opacity-50"
+    : "hover:border-purple-500/40 hover:text-white"
+  }`}
+  >
+    
     {icon}
     {label}
   </button>
